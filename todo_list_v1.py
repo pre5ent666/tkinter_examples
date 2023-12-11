@@ -58,6 +58,8 @@ class Todo(tk.Tk):
             new_task.configure(bg=my_scheme_choice["bg"])
             new_task.configure(fg=my_scheme_choice["fg"])
 
+            new_task.pack(side=tk.TOP, fill=tk.X)
+
             self.tasks.append(new_task)
 
         self.task_create.delete(1.0, tk.END)
