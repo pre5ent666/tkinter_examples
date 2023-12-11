@@ -3,9 +3,6 @@ Create a basic to-do list
 We will learn about the following:
 - Allowing the user to enter text
 - Binding functions to key presses
-- Dynamically generatring widgets
-- Scrolling an area
-- Storing data (with sqlite)
 
 Ref.:
 - David Love (2018). Python Tkinter By Example.
