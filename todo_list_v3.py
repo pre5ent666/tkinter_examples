@@ -13,6 +13,8 @@ Ref.:
 
 import tkinter as tk
 import tkinter.messagebox as msg
+import os
+import sqlite3
 
 class Todo(tk.Tk):
     def __init__(self, tasks=None):
@@ -67,10 +69,19 @@ class Todo(tk.Tk):
         # define scheme
         self.colour_schemes = [{"bg": "lightgrey", "fg": "black"},{"bg": "grey", "fg": "white"}]
 
+        current_tasks = self.load_tasks()
+        for task in current_tasks:
+            task_text = task[0]
+            self.add_task(None, task_text, True)
+
     def remove_task(self, event):
         task = event.widget
         if msg.askyesno("Really Delete?", "Delete " + task.cget("text") + "?"):
             self.tasks.remove(event.widget)
+            delete_task_query = "DELETE FROM tasks WHERE task=?"
+            delete_atsk_data = (task.cget("text"),)
+            self.runQuery(delete_task_query, delete_atsk_data)
+
             event.widget.destroy()
             self.recolour_tasks()
 
@@ -78,8 +89,9 @@ class Todo(tk.Tk):
         for index, task in enumerate(self.tasks):
             self.set_task_colour(index, task)
 
-    def add_task(self, event=None):
-        task_text = self.task_create.get(1.0,tk.END).strip()
+    def add_task(self, event=None, task_text=None, from_db=False):
+        if not task_text:
+            task_text = self.task_create.get(1.0,tk.END).strip()
 
         if len(task_text) > 0:
             new_task = tk.Label(self.tasks_frame, text=task_text, pady=10) # the master here is different from v1
@@ -89,6 +101,9 @@ class Todo(tk.Tk):
             new_task.pack(side=tk.TOP, fill=tk.X)
 
             self.tasks.append(new_task)
+
+            if not from_db:
+                self.save_task(task_text)
 
         self.task_create.delete(1.0, tk.END)
 
